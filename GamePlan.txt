@@ -1,0 +1,38 @@
+Super Tiler
+Goals:
+Load a source image and then populate it with a user defined tiles
+
+UI elements:
+        Processed image display
+        Stack of tile layers
+                Tile Layer manipulators
+        Controls for current selection
+                Source Image
+                Target Output
+                Tile input
+                Tile rotation
+                tile scale
+                tile opacity
+                Each operation can take an input wich can be:
+                        The Source
+                        The current active state (i.e. all processes up to the current latyer)
+                        Another image
+                        Randomness controls
+                        constant value
+                        Random walker
+        Inspection controls:
+                Need to inspect the image to be tiled
+                the output of the operations
+                Functions:
+                        Zoom
+                        Pan
+        Each tile needs basic controls:
+                Count
+                Size
+                base orientation
+                image
+                procedural function
+                mask
+                        alpha channel
+                        image
+                        function
