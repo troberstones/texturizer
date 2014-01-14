@@ -21,7 +21,6 @@ void TileManager::AddTile()
     Tile newTile;
     newTile.SetName(std::string(nameBuf));
     m_tileVector.push_back(newTile);
-    std::cout << "Tile count:" << m_tileVector.size() << std::endl;
 }
 
 void TileManager::RemoveTile(int tileIndex)
@@ -50,7 +49,6 @@ std::string TileManager::GetMemo(int tileIndex)
 
 void TileManager::SetName(int tileIndex, std::string &name)
 {
-
     m_tileVector[tileIndex].SetName(name);
 }
 
@@ -71,7 +69,6 @@ const std::vector<Tile> &TileManager::GetTiles() const
 
 void TileManager::Prep()
 {
-    std::cout << "Tile Manager Prep Called" << std::endl;
    // Loop over tiles and populate them
     for(int i = 0; i < GetCount(); ++i)
     {

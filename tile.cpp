@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include "tile.h"
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <cstdlib> // rand
 // A tile is a data object that embodies the capabilites
 // of a tiler tile. Each tile can be rendered to the target
@@ -11,15 +13,18 @@
 Tile::Tile():
     s_labels(0),
     m_tileCount(0),
+    m_r(1.0f),
+    m_g(1.0f),
+    m_b(1.0f),
     m_mode(kUniform),
     m_texture(""),
     m_name("default"),
     m_memo("memoVal"),
-    m_rotate(),
+    m_rotate(0),
     m_rotateRange(0),
     m_scale(0),
     m_scaleRange(0),
-    m_width(0),
+    m_width(10),
     m_widthRange(0),
     m_height(0),
     m_heightRange(0),
@@ -29,11 +34,14 @@ Tile::Tile():
 {
     if(s_labels.size() == 0)
         initLabels();
-    std::cout << "Base ctor"  << std::endl;
+    //std::cout << "Base ctor"  << std::endl;
 }
 
 Tile::Tile(std::string name):
     m_name(name),
+    m_r(1.0f),
+    m_g(1.0f),
+    m_b(1.0f),
     s_labels(0),
     m_tileCount(0),
     m_mode(kUniform),
@@ -53,18 +61,21 @@ Tile::Tile(std::string name):
 {
     if(s_labels.size() == 0)
         initLabels();
-    std::cout << "name ctor" << std::endl;
+    //std::cout << "name ctor" << std::endl;
     m_seed = rand();
 }
 
+#define TORADIANS(a) a * 0.0174532925;
 void Tile::Populate()
 {
     //XXX
     //std::vector<items> foo;
-    if(m_tiles.size() == m_tileCount)
+    bool noCountChange = false;
+    if( m_tiles.size() == m_tileCount)
     {
         std::cout << "Tile:Populate: size:" << m_tiles.size() << "tileCount request:" << m_tileCount << std::endl;
-        return;
+        bool noCountChange = true;
+        //return;
     }
     else
     {
@@ -73,25 +84,60 @@ void Tile::Populate()
     srand(m_seed);
     // Need to check for changes
     m_tiles.reserve(m_tileCount);
+    std::cout << "Populating for render: TileCount:" << m_tileCount << std::endl;
+    float invRandMax = 1.f/(float)RAND_MAX;
+
     for(int i = 0; i < m_tileCount; ++i)
     {
+        //Posiont
         float x = (rand()%100) / 100.f;
         float y = (rand()%100) / 100.f;
-        item tmp(x, y, 0.f, 1.f, 1.f, 0.f);
-        std::cout << "push:" << i << std::endl;
-        m_tiles.push_back(tmp);
+
+        // Rotation
+        float rot = m_rotate;
+        if(m_rotateRange != 0)
+            rot += m_rotateRange * ((rand()*invRandMax) * 2.f - 1.f);
+        rot =  TORADIANS(rot);
+
+        //Width/hight
+        float w = m_width;
+        if(m_widthRange != 0)
+            w += m_widthRange * ((rand()*invRandMax) * 2.f - 1.f);
+
+        float h = m_height;
+        if(m_heightRange != 0)
+            h += m_heightRange * ((rand()*invRandMax) * 2.f - 1.f);
+
+        // Set color
+        if(noCountChange)
+        {
+            // Just set new values.
+            m_tiles.at(i).setTile(x, y, 0.f, w, h, rot);
+            m_tiles.at(i).r = m_r;
+            m_tiles.at(i).g = m_g;
+            m_tiles.at(i).b = m_b;
+        }
+        else
+        {
+            item tmp(x, y, 0.f, w, h, rot);
+            tmp.r = m_r;
+            tmp.g = m_g;
+            tmp.b = m_b;
+            //std::cout << "push:" << i << std::endl;
+            m_tiles.push_back(tmp);
+        }
     }
 }
 
 item::item(float inx, float iny, float inz, float width, float height, float rot):
     x(inx), y(iny), z(inz), w(width), h(height), rotate(rot)
 {
-    std::cout << "ctor called" << std::endl;
+    //std::cout << "ctor called" << std::endl;
 }
 
 item::~item()
 {
-    std::cout << "dtor called" << std::endl;
+    //std::cout << "dtor called" << std::endl;
 }
 
 void item::setTile(const float &inx, const float &iny, const float &inz, const float &inw,
@@ -106,6 +152,9 @@ void item::setTile(const float &inx, const float &iny, const float &inz, const f
 }
 
 // Hit test the item and fill in the s and t of the hit. Return true if hit
+// If i choose to not use QPainter to draw the tiles, I'll use this function to
+// render the items.
+// Currently, only a simple hit test for a rectangle is sketched out.
 bool item::intersect(const float &testX, const float &testY, float &hitS, float &hitT)
 {
     // xform test point into tile space.

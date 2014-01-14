@@ -1,9 +1,9 @@
 #ifndef TILEDATAMODEL_H
 #define TILEDATAMODEL_H
 
+#include <QBrush>
 #include <QAbstractTableModel>
 #include "tile.h"
-
 class TileDataModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -15,6 +15,7 @@ public:
     }
 
     int columnCount(const QModelIndex &parent) const { return 2; }
+
     QVariant data(const QModelIndex &index, int role) const
     {
         if(role == Qt::DisplayRole)
@@ -29,7 +30,20 @@ public:
             if(index.column()==0)
                 return QVariant(m_tile->GetLabelAtIndex(index.row()).c_str());
             else
-                return m_tile->GetOrEditValueAtIndex(index.row());
+            {
+                QVariant tmp = m_tile->GetOrEditValueAtIndex(index.row());
+                std::cout << "[TileDataModel]Type is:" << tmp.typeName() << std::endl;
+                return tmp;
+            }
+        }
+        else if (role == Qt::BackgroundColorRole)
+        {
+            if(index.column() == 1 && index.row() == 1)
+            {
+                QBrush colorBrush(m_tile->GetOrEditValueAtIndex(index.row()).value<QColor>());
+                return colorBrush;
+            }
+            else return QVariant();
         }
         else
             return QVariant();

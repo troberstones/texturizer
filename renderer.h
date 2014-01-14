@@ -13,14 +13,20 @@ public:
     void SetTileManager(TileManager *inputManager);
 
     void paint(QPainter *painter, QPaintEvent *event, int elapsed);
-
+    void SetSize(int xres, int yres)
+    {
+        m_xres=xres;
+        m_yres = yres;
+    }
 private:
-    QBrush background;
-    QBrush circleBrush;
-    QFont textFont;
-    QPen circlePen;
-    QPen textPen;
-
+    QBrush m_background;
+    QBrush m_tileBrush;
+    QFont m_textFont;
+    QPen m_tilePen;
+    QPen m_textPen;
+    QColor m_color;
+    int m_xres;
+    int m_yres;
     TileManager *m_tileManager;
 };
 

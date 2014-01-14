@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     tilemanager.cpp \
     atest.cpp \
     tilemgrdatamodel.cpp \
-    tiledatamodel.cpp
+    tiledatamodel.cpp \
+    editordelegate.cpp
 
 HEADERS  += mainwindow.h \
     tile.h \
@@ -29,7 +30,9 @@ HEADERS  += mainwindow.h \
     tilemanager.h \
     atest.h \
     tilemgrdatamodel.h \
-    tiledatamodel.h
+    tiledatamodel.h \
+    utils.h \
+    editordelegate.h
 
 FORMS    += mainwindow.ui
 

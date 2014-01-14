@@ -36,3 +36,42 @@ UI elements:
                         alpha channel
                         image
                         function
+
+Nov 30:
+Tasks to complete:
+1: Specify tile image
+    Hard code an image to be rendered by the tile
+2: Add color picker option for table
+    Make a color picker delegate for the table
+3: Add image picker for table
+    Make an image delegate for the table or something
+
+Load background image
+specify tile color variation
+Fix double render button problem
+Add slider for table
+
+Design:
+Mechansim where you can drive the parameters of the table
+with a connection to another node i.e. Use an image to drive scale
+to do this I'll need a second field for each parameter representing a node connection
+
+I don't currently have nodes, so I need to design a base class and a map to hold them
+nodes will be referenced by their name, so connections will just be node names
+
+Need a way to have a list of the current nodes
+Connection return values:
+float color image?
+each node will implement a NodeInterface
+
+class NodeInterface:
+  // returns a color or float based on the
+  // coordinates requested
+  getFloat(float x,y);
+  getColor(float x,y);
+
+  // Not sure about this one
+  getImage()
+
+Problem with nodes is that they need to be edited. Thus the need to have an interface for the
+tile editor thing

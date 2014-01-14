@@ -6,7 +6,7 @@
 canvas::canvas(Renderer *myRenderer, QWidget *parent) :
     QWidget(parent), m_renderer(myRenderer)
 {
-    setFixedSize(400,400);
+    //setFixedSize(400,400);
 }
 
 void canvas::paintEvent(QPaintEvent *event)

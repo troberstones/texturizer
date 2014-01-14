@@ -5,8 +5,13 @@
 #include <string>
 #include <vector>
 #include <QVariant>
+#include <QColor>
 #include <iostream>
 
+// The Item class holds the necessary information to render a tile and do basic setup.
+// Eventually I'll implement another class that can populate the rotation, scale and color
+// with more interesting properties.
+// Initially these will be handled by the initialization of the items
 class item {
 public:
     // Commend out for now, as I need to pass in consts to test
@@ -17,6 +22,7 @@ public:
     //void scale    (const float &x, const float &y);
     //void rotate   (const float &x);
     //void jitter   (const float &x, const float &y);
+    //void color    (const float &r, const float &g, const float &b);
     bool intersect(const float &testX, const float &testY, float &hitS, float &hitT);
 
     //int id;
@@ -64,6 +70,7 @@ public:
     void SetRotateRange(float range)          { m_rotateRange = range;}
     void SetHeight(float height)              { m_height = height;}
     void SetHeightRange(float range)          { m_heightRange = range;}
+    void SetColor(float r, float g, float b)  { m_r = r; m_g = g; m_b = b;}
 
     ItemArray &GetItemArray()                 { return m_tiles;}
     std::string GetMemo()                     { return m_memo;}
@@ -80,6 +87,7 @@ public:
     float GetRotateRange()                    { return m_rotateRange;}
     float GetHeight()                         { return m_height;}
     float GetHeightRange()                    { return m_heightRange;}
+    void  GetColor(float &r,float &g,float &b){ r = m_r; g = m_g; b=m_b;}
     std::string GetLabelAtIndex(int index){
         return s_labels[index];
     }
@@ -88,12 +96,28 @@ public:
     QVariant GetOrEditValueAtIndex(int index, int m=0, QVariant val=NULL)
     {
         QVariant result;
+        QColor tmpColor;
         switch (index) {
         case Count:
             if(m == Fetch)
                 result = GetCount();
             else
                 SetCount(val.toInt());
+            break;
+        case Color:
+            if(m == Fetch)
+            {
+                tmpColor.setRedF(m_r);
+                tmpColor.setGreenF(m_g);
+                tmpColor.setBlueF(m_b);
+                result = tmpColor;
+            }
+            else
+            {
+                tmpColor = val.value<QColor>();
+                std::cout << "Setting the red component of tile to: " << tmpColor.redF() << std::endl;
+                SetColor(tmpColor.redF(), tmpColor.greenF(), tmpColor.blueF());
+            }
             break;
         case Jitter:
             if(m == Fetch)
@@ -183,7 +207,6 @@ public:
     // Loop over each tile and compute the color
     void Sample(const float &x, const float &y);
 
-
     enum EEditMode {
         Fetch=0,
         Edit,
@@ -191,6 +214,7 @@ public:
 
     enum ENames {
         Count = 0,
+        Color,
         Jitter,
         Scale,
         ScaleRange,
@@ -204,12 +228,14 @@ public:
         HeightRange,
         Name,
         Memo
+
     };
 
 private:
     void initLabels(){
         char* labels[] = {
                         "Count",
+                        "Color",
                         "Jitter",
                         "Scale",
                         "ScaleRange",
@@ -263,6 +289,11 @@ private:
     float m_yscale;
 
     float m_jitter;
+
+    float m_r;
+    float m_g;
+    float m_b;
+    float m_colorVariation;
 
     // The actual tiles
     ItemArray m_tiles;
